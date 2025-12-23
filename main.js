@@ -319,12 +319,8 @@ function renderCardsPage(items) {
 		const h3 = document.createElement("h3");
 		h3.className = "card-title";
 		h3.textContent = p.nameLocal || p.nameRoman || `Member ${p.index + 1}`;
-		const sub = document.createElement("div");
-		sub.className = "card-subtitle";
-		sub.textContent = p.nameRoman && p.nameRoman !== p.nameLocal ? p.nameRoman : "";
 
 		titleBox.appendChild(h3);
-		if (sub.textContent) titleBox.appendChild(sub);
 
 		header.appendChild(titleBox);
 
