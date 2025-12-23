@@ -195,6 +195,61 @@ function initialsFrom(nameLocal, nameRoman) {
 	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+/* Google Drive photo helpers */
+function extractGoogleDriveId(url) {
+	if (!url) return null;
+	try {
+		const u = new URL(url);
+		// Patterns:
+		// - /file/d/{id}/view
+		// - ?id={id}
+		// - /thumbnail?id={id}
+		if (u.hostname.includes("drive.google.com")) {
+			const parts = u.pathname.split("/").filter(Boolean);
+			const fileIdx = parts.indexOf("file");
+			if (fileIdx >= 0 && parts[fileIdx + 1] === "d" && parts[fileIdx + 2]) {
+				return parts[fileIdx + 2];
+			}
+			const idParam = u.searchParams.get("id");
+			if (idParam) return idParam;
+			// Fallback: /uc?id=... or other forms
+			const ucId = u.searchParams.get("export") && u.searchParams.get("id");
+			if (ucId) return ucId;
+		}
+		if (u.hostname.includes("lh3.googleusercontent.com")) {
+			// /d/{id}=...
+			const m = u.pathname.match(/\/d\/([^=\/]+)/);
+			if (m && m[1]) return m[1];
+		}
+	} catch (_) {
+		// Not a valid absolute URL; try regex
+		const m = String(url).match(/\/d\/([a-zA-Z0-9_-]+)/);
+		if (m && m[1]) return m[1];
+		const q = String(url).match(/[?&]id=([a-zA-Z0-9_-]+)/);
+		if (q && q[1]) return q[1];
+	}
+	return null;
+}
+
+function buildPhotoCandidates(rawUrl) {
+	const candidates = [];
+	const trimmed = (rawUrl || "").trim();
+	if (!trimmed) return candidates;
+	const fileId = extractGoogleDriveId(trimmed);
+	if (fileId) {
+		// Direct view
+		candidates.push(`https://drive.google.com/uc?export=view&id=${fileId}`);
+		// Thumbnail (large)
+		candidates.push(`https://drive.google.com/thumbnail?id=${fileId}&sz=w2000`);
+		// Googleusercontent direct
+		candidates.push(`https://lh3.googleusercontent.com/d/${fileId}=w2000`);
+	} else {
+		candidates.push(trimmed);
+	}
+	// Deduplicate while preserving order
+	return Array.from(new Set(candidates));
+}
+
 /* Rendering */
 function renderToc(items) {
 	tocListEl.innerHTML = "";
@@ -237,8 +292,22 @@ function renderCardsPage(items) {
 			const img = document.createElement("img");
 			img.alt = (p.nameRoman || p.nameLocal || "Photo");
 			img.referrerPolicy = "no-referrer";
-			img.src = p.photo;
+			const sources = buildPhotoCandidates(p.photo);
+			let idxSrc = 0;
+			function tryNext() {
+				if (idxSrc >= sources.length) {
+					// Fallback to initials
+					if (photoBox.contains(img)) photoBox.removeChild(img);
+					photoBox.textContent = initialsFrom(p.nameLocal, p.nameRoman);
+					return;
+				}
+				img.src = sources[idxSrc++];
+			}
+			img.onerror = () => {
+				tryNext();
+			};
 			photoBox.appendChild(img);
+			tryNext();
 		} else {
 			photoBox.textContent = initialsFrom(p.nameLocal, p.nameRoman);
 		}
