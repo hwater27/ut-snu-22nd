@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>22nd UT–SNU Kendo Friendship Match – Members</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+	<header class="site-header">
+		<div class="container">
+			<h1>22nd UT–SNU Kendo Friendship Match</h1>
+			<p class="subtitle">Member Introductions</p>
+		</div>
+	</header>
+
+	<main class="container">
+		<section id="toc-section" class="panel">
+			<div class="panel-header">
+				<h2>Table of Contents</h2>
+				<p class="muted">Click a name to jump to the member’s card. Use the controls to paginate through cards.</p>
+				<div class="toc-actions">
+					<button id="btn-show-cards" class="btn primary">Show Cards (Page 1)</button>
+				</div>
+			</div>
+			<ul id="toc-list" class="toc-list"></ul>
+		</section>
+
+		<section id="cards-section" class="panel hidden">
+			<div class="panel-header">
+				<div class="panel-title-row">
+					<h2>Members</h2>
+					<a href="#top" id="back-to-toc" class="link back">Back to TOC</a>
+				</div>
+				<div class="pager">
+					<button id="prev-page" class="btn" disabled>Prev</button>
+					<div id="page-indicator" class="pager-indicator">Page 1 / 1</div>
+					<button id="next-page" class="btn" disabled>Next</button>
+				</div>
+			</div>
+			<div id="cards-grid" class="cards-grid"></div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="container">
+			<p class="muted">Data source: Google Sheets.
+				<a target="_blank" rel="noopener noreferrer" href="https://docs.google.com/spreadsheets/d/1pMFnTJJiDN3AYKNAP3NEHNXnl2UXPLl5gdEIZR-SA3s/edit?usp=sharing">Open sheet</a>
+			</p>
+			<p class="muted">This is a static site for Netlify deployment.</p>
+		</div>
+	</footer>
+
+	<script>
+		// Provide a small hash anchor at the top for "Back to TOC"
+		if (!location.hash) {
+			history.replaceState(null, "", "#top");
+			setTimeout(() => {
+				history.replaceState(null, "", " ");
+			}, 0);
+		}
+	</script>
+	<script src="./main.js" defer></script>
+</body>
+</html>
+
+
