@@ -263,6 +263,8 @@ body {
 	padding-top: 8px;
 	border-top: 1px dashed var(--border);
 	color: #8a4b1c;
+	font-size: 13px;
+	line-height: 1.4;
 }
 
 /* Responsive tweaks */
