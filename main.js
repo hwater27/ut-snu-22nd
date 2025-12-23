@@ -230,20 +230,21 @@ function renderCardsPage(items) {
 		card.className = "card";
 		card.id = p.id;
 
-		const header = document.createElement("div");
-		header.className = "card-header";
-
-		const avatar = document.createElement("div");
-		avatar.className = "avatar";
+		// Photo banner (full width)
+		const photoBox = document.createElement("div");
+		photoBox.className = "card-photo";
 		if (p.photo) {
 			const img = document.createElement("img");
 			img.alt = (p.nameRoman || p.nameLocal || "Photo");
 			img.referrerPolicy = "no-referrer";
 			img.src = p.photo;
-			avatar.appendChild(img);
+			photoBox.appendChild(img);
 		} else {
-			avatar.textContent = initialsFrom(p.nameLocal, p.nameRoman);
+			photoBox.textContent = initialsFrom(p.nameLocal, p.nameRoman);
 		}
+
+		const header = document.createElement("div");
+		header.className = "card-header";
 
 		const titleBox = document.createElement("div");
 		const h3 = document.createElement("h3");
@@ -256,7 +257,6 @@ function renderCardsPage(items) {
 		titleBox.appendChild(h3);
 		if (sub.textContent) titleBox.appendChild(sub);
 
-		header.appendChild(avatar);
 		header.appendChild(titleBox);
 
 		const body = document.createElement("div");
@@ -290,6 +290,7 @@ function renderCardsPage(items) {
 			body.appendChild(greet);
 		}
 
+		card.appendChild(photoBox);
 		card.appendChild(header);
 		card.appendChild(body);
 		cardsGridEl.appendChild(card);
